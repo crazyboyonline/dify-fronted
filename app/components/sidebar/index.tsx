@@ -43,7 +43,8 @@ const Sidebar: FC<ISidebarProps> = ({
         {list.length < MAX_CONVERSATION_LENTH && (
           <button
             onClick={() => { onCurrentIdChange('-1') }}
-            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 border border-[var(--border-emphasis)] rounded-lg text-[var(--text-secondary)] text-sm font-medium transition-all duration-250 hover:bg-[var(--bg-tertiary)] hover:border-[var(--accent-warm)] hover:text-[var(--accent-warm)]"
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-[var(--accent-warm)] to-[#c97a5f] border-none rounded-lg text-white text-sm font-medium transition-all duration-250 hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]"
+            style={{ boxShadow: '0 4px 20px var(--accent-glow)' }}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M12 5v14M5 12h14" />
@@ -61,8 +62,8 @@ const Sidebar: FC<ISidebarProps> = ({
               onClick={() => onCurrentIdChange(item.id)}
               key={item.id}
               className={`flex items-center gap-2.5 px-3.5 py-2.5 rounded-md cursor-pointer text-sm transition-all duration-200 opacity-0 ${isCurrent
-                  ? 'bg-[var(--bg-tertiary)] text-[var(--text-primary)]'
-                  : 'text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] hover:text-[var(--text-primary)]'
+                ? 'bg-[var(--bg-tertiary)] text-[var(--text-primary)]'
+                : 'text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] hover:text-[var(--text-primary)]'
                 }`}
               style={{ animationDelay: `${0.1 + index * 0.05}s`, animation: 'fadeIn 0.4s ease forwards' }}
             >
