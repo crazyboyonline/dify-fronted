@@ -55,6 +55,8 @@ const Chat: FC<IChatProps> = ({
   const { t } = useTranslation()
   const { notify } = Toast
   const isUseInputMethod = useRef(false)
+  const listRef = useRef<HTMLDivElement>(null)
+  const stickToBottomRef = useRef(true)
 
   const [query, setQuery] = React.useState('')
   const queryRef = useRef('')
@@ -84,6 +86,27 @@ const Chat: FC<IChatProps> = ({
       queryRef.current = ''
     }
   }, [controlClearQuery])
+
+  const updateStickToBottom = () => {
+    const el = listRef.current
+    if (!el) return
+    const distanceToBottom = el.scrollHeight - el.scrollTop - el.clientHeight
+    stickToBottomRef.current = distanceToBottom < 80
+  }
+
+  const scrollToBottom = () => {
+    const el = listRef.current
+    if (!el) return
+    el.scrollTop = el.scrollHeight
+  }
+
+  useEffect(() => {
+    if (!stickToBottomRef.current) return
+    // defer to allow DOM layout after new content
+    setTimeout(() => {
+      scrollToBottom()
+    }, 0)
+  }, [chatList.length])
   const {
     files,
     onUpload,
@@ -142,9 +165,14 @@ const Chat: FC<IChatProps> = ({
   }
 
   return (
-    <div className={cn(!feedbackDisabled && 'px-3.5', 'h-full')}>
+    <div className={cn(!feedbackDisabled && 'px-3.5', 'flex flex-col flex-1 min-h-0')}>
       {/* Chat List */}
-      <div className="h-full space-y-[30px]">
+      <div
+        ref={listRef}
+        onScroll={updateStickToBottom}
+        data-chat-scroll="true"
+        className="flex-1 min-h-0 overflow-y-auto space-y-[30px] pb-6"
+      >
         {chatList.map((item) => {
           if (item.isAnswer) {
             const isLast = item.id === chatList[chatList.length - 1].id
@@ -170,8 +198,8 @@ const Chat: FC<IChatProps> = ({
       </div>
       {
         !isHideSendInput && (
-          <div className='fixed z-10 bottom-0 left-1/2 transform -translate-x-1/2 pc:ml-[122px] tablet:ml-[96px] mobile:ml-0 pc:w-[794px] tablet:w-[794px] max-w-full mobile:w-full px-3.5'>
-            <div className='p-[5.5px] max-h-[150px] bg-white border-[1.5px] border-gray-200 rounded-xl overflow-y-auto'>
+          <div className='shrink-0 w-full pt-3 pb-4'>
+            <div className='relative p-[5.5px] max-h-[150px] bg-white border-[1.5px] border-gray-200 rounded-xl overflow-y-auto'>
               {
                 visionConfig?.enabled && (
                   <>

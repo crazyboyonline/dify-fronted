@@ -173,17 +173,6 @@ const Main: FC<IMainProps> = () => {
   */
   const [chatList, setChatList, getChatList] = useGetState<ChatItem[]>([])
   const chatListDomRef = useRef<HTMLDivElement>(null)
-  useEffect(() => {
-    // scroll to bottom with page-level scrolling
-    if (chatListDomRef.current) {
-      setTimeout(() => {
-        chatListDomRef.current?.scrollIntoView({
-          behavior: 'auto',
-          block: 'end',
-        })
-      }, 50)
-    }
-  }, [chatList, currConversationId])
   // user can not edit inputs if user had send message
   const canEditInputs = !chatList.some(item => item.isAnswer === false) && isNewConversation
   const createNewChat = () => {
@@ -672,7 +661,7 @@ const Main: FC<IMainProps> = () => {
           </div>
         )}
         {/* main */}
-        <div className='flex-grow flex flex-col overflow-hidden'>
+        <div className='flex-grow flex flex-col overflow-hidden min-h-0'>
           <ConfigSence
             conversationName={conversationName}
             hasSetInputs={hasSetInputs}
@@ -687,7 +676,7 @@ const Main: FC<IMainProps> = () => {
 
           {
             hasSetInputs && (
-              <div className='relative grow max-w-full mx-auto' style={{ width: '100%', maxWidth: '900px', padding: '0 40px' }} ref={chatListDomRef}>
+              <div className='relative flex flex-col flex-1 min-h-0 max-w-full mx-auto' style={{ width: '100%', maxWidth: '900px', padding: '0 40px' }} ref={chatListDomRef}>
                 <Chat
                   chatList={chatList}
                   onSend={handleSend}
