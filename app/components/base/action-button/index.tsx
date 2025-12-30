@@ -17,6 +17,7 @@ const actionButtonVariants = cva(
     variants: {
       size: {
         xs: 'action-btn-xs',
+        s: 'action-btn-xs',
         m: 'action-btn-m',
         l: 'action-btn-l',
         xl: 'action-btn-xl',
@@ -32,6 +33,8 @@ export type ActionButtonProps = {
   size?: 'xs' | 's' | 'm' | 'l' | 'xl'
   state?: ActionButtonState
   styleCss?: CSSProperties
+  'aria-label'?: string
+  'data-testid'?: string
 } & React.ButtonHTMLAttributes<HTMLButtonElement> & VariantProps<typeof actionButtonVariants>
 
 function getActionButtonState(state: ActionButtonState) {
@@ -50,16 +53,21 @@ function getActionButtonState(state: ActionButtonState) {
 }
 
 const ActionButton = React.forwardRef<HTMLButtonElement, ActionButtonProps>(
-  ({ className, size, state = ActionButtonState.Default, styleCss, children, ...props }, ref) => {
+  ({ className, size, state = ActionButtonState.Default, styleCss, children, disabled, 'aria-label': ariaLabel, 'data-testid': testId, ...props }, ref) => {
+    const stateClass = disabled ? 'action-btn-disabled' : getActionButtonState(state)
+
     return (
       <button
         type='button'
         className={classNames(
           actionButtonVariants({ className, size }),
-          getActionButtonState(state),
+          stateClass,
         )}
         ref={ref}
         style={styleCss}
+        disabled={disabled}
+        aria-label={ariaLabel}
+        data-testid={testId}
         {...props}
       >
         {children}
