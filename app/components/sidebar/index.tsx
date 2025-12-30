@@ -32,54 +32,49 @@ const Sidebar: FC<ISidebarProps> = ({
   const { t } = useTranslation()
   return (
     <div
-      className="shrink-0 flex flex-col overflow-y-auto bg-white pc:w-[244px] tablet:w-[192px] mobile:w-[240px]  border-r border-gray-200 tablet:h-[calc(100vh_-_3rem)] mobile:h-screen"
+      className="shrink-0 flex flex-col overflow-y-auto bg-[var(--bg-secondary)] pc:w-[260px] tablet:w-[192px] mobile:w-[240px] border-r border-[var(--border-subtle)] tablet:h-[calc(100vh_-_3rem)] mobile:h-screen"
+      style={{ animation: 'slideIn 0.8s cubic-bezier(0.23, 1, 0.32, 1)' }}
     >
-      {list.length < MAX_CONVERSATION_LENTH && (
-        <div className="flex flex-shrink-0 p-4 !pb-0">
-          <Button
-            onClick={() => { onCurrentIdChange('-1') }}
-            className="group block w-full flex-shrink-0 !justify-start !h-9 text-primary-600 items-center text-sm"
-          >
-            <PencilSquareIcon className="mr-2 h-4 w-4" /> {t('app.chat.newChat')}
-          </Button>
+      <div className="flex flex-shrink-0 p-6 !pb-4">
+        <div className="flex items-center gap-2 mb-5">
+          <div className="w-7 h-7 bg-gradient-to-br from-[var(--accent-warm)] to-[#c97a5f] rounded-md flex items-center justify-center text-white text-sm font-semibold shadow-lg" style={{ boxShadow: '0 2px 12px var(--accent-glow)' }}>IC</div>
+          <span className="text-[var(--text-primary)] font-medium text-base">智能客服</span>
         </div>
-      )}
+        {list.length < MAX_CONVERSATION_LENTH && (
+          <button
+            onClick={() => { onCurrentIdChange('-1') }}
+            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 border border-[var(--border-emphasis)] rounded-lg text-[var(--text-secondary)] text-sm font-medium transition-all duration-250 hover:bg-[var(--bg-tertiary)] hover:border-[var(--accent-warm)] hover:text-[var(--accent-warm)]"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M12 5v14M5 12h14" />
+            </svg>
+            新对话
+          </button>
+        )}
+      </div>
 
-      <nav className="mt-4 flex-1 space-y-1 bg-white p-4 !pt-0">
-        {list.map((item) => {
+      <nav className="flex-1 px-4 pb-4 space-y-1">
+        {list.map((item, index) => {
           const isCurrent = item.id === currentId
-          const ItemIcon
-            = isCurrent ? ChatBubbleOvalLeftEllipsisSolidIcon : ChatBubbleOvalLeftEllipsisIcon
           return (
             <div
               onClick={() => onCurrentIdChange(item.id)}
               key={item.id}
-              className={classNames(
-                isCurrent
-                  ? 'bg-primary-50 text-primary-600'
-                  : 'text-gray-700 hover:bg-gray-100 hover:text-gray-700',
-                'group flex items-center rounded-md px-2 py-2 text-sm font-medium cursor-pointer',
-              )}
+              className={`flex items-center gap-2.5 px-3.5 py-2.5 rounded-md cursor-pointer text-sm transition-all duration-200 opacity-0 ${isCurrent
+                  ? 'bg-[var(--bg-tertiary)] text-[var(--text-primary)]'
+                  : 'text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] hover:text-[var(--text-primary)]'
+                }`}
+              style={{ animationDelay: `${0.1 + index * 0.05}s`, animation: 'fadeIn 0.4s ease forwards' }}
             >
-              <ItemIcon
-                className={classNames(
-                  isCurrent
-                    ? 'text-primary-600'
-                    : 'text-gray-400 group-hover:text-gray-500',
-                  'mr-3 h-5 w-5 flex-shrink-0',
-                )}
-                aria-hidden="true"
-              />
-              {item.name}
+              <div className={`w-1 h-1 rounded-full flex-shrink-0 ${isCurrent ? 'bg-[var(--accent-warm)]' : 'bg-[var(--text-muted)]'
+                }`} style={isCurrent ? { boxShadow: '0 0 8px var(--accent-glow)' } : {}}></div>
+              <span className="truncate">{item.name}</span>
             </div>
           )
         })}
       </nav>
-      {/* <a className="flex flex-shrink-0 p-4" href="https://langgenius.ai/" target="_blank">
-        <Card><div className="flex flex-row items-center"><ChatBubbleOvalLeftEllipsisSolidIcon className="text-primary-600 h-6 w-6 mr-2" /><span>LangGenius</span></div></Card>
-      </a> */}
-      <div className="flex flex-shrink-0 pr-4 pb-4 pl-4">
-        <div className="text-gray-400 font-normal text-xs">© {copyRight} {(new Date()).getFullYear()}</div>
+      <div className="flex flex-shrink-0 px-6 pb-4 pt-2 border-t border-[var(--border-subtle)]">
+        <div className="text-[var(--text-muted)] font-normal text-xs">© {copyRight} {(new Date()).getFullYear()}</div>
       </div>
     </div>
   )

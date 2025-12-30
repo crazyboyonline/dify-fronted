@@ -1,6 +1,8 @@
 .answerIcon {
   position: relative;
-  background: url(./icons/robot.svg);
+  background: linear-gradient(135deg, var(--accent-warm) 0%, #c97a5f 100%);
+  border-radius: 8px;
+  box-shadow: 0 2px 12px var(--accent-glow);
 }
 
 .typeingIcon {
@@ -12,16 +14,16 @@
   align-items: center;
   width: 16px;
   height: 16px;
-  background: #FFFFFF;
-  box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05);
+  background: var(--bg-tertiary);
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05);
   border-radius: 16px;
 }
 
-
 .questionIcon {
-  background: url(./icons/default-avatar.jpg);
+  background: var(--bg-tertiary);
   background-size: contain;
-  border-radius: 50%;
+  border-radius: 8px;
+  border: 1px solid var(--border-subtle);
 }
 
 .answer::before,
@@ -52,16 +54,34 @@
 }
 
 .textArea {
-  padding-top: 13px;
-  padding-bottom: 13px;
+  padding-top: 14px;
+  padding-bottom: 14px;
   padding-right: 90px;
+  padding-left: 16px;
   border-radius: 12px;
-  line-height: 20px;
-  background-color: #fff;
+  line-height: 1.5;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  font-family: var(--font-serif);
+  font-size: 15px;
+  transition: all 0.25s ease;
+  min-height: 52px;
 }
 
 .textArea:hover {
-  background-color: #fff;
+  background-color: var(--bg-tertiary);
+  border-color: var(--border-emphasis);
+}
+
+.textArea:focus {
+  border-color: var(--accent-warm);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+  background-color: var(--bg-tertiary);
+}
+
+.textArea::placeholder {
+  color: var(--text-muted);
 }
 
 /* .textArea:focus {
@@ -74,12 +94,26 @@
 }
 
 .sendBtn {
-  background: url(./icons/send.svg) center center no-repeat;
+  background: linear-gradient(135deg, var(--accent-warm) 0%, #c97a5f 100%);
+  border: none;
+  border-radius: 8px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
 }
 
 .sendBtn:hover {
-  background-image: url(./icons/send-active.svg);
-  background-color: #EBF5FF;
+  transform: scale(1.05);
+  box-shadow: 0 2px 12px var(--accent-glow);
+}
+
+.sendBtn svg {
+  width: 18px;
+  height: 18px;
+  stroke: white;
 }
 
 .textArea:focus+div .count {

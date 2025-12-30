@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -7,37 +9,47 @@
 :root {
   --max-width: 1100px;
   --border-radius: 12px;
-  --font-mono: ui-monospace, Menlo, Monaco, "Cascadia Mono", "Segoe UI Mono",
+  --font-mono: 'IBM Plex Mono', ui-monospace, Menlo, Monaco, "Cascadia Mono", "Segoe UI Mono",
     "Roboto Mono", "Oxygen Mono", "Ubuntu Monospace", "Source Code Pro",
     "Fira Mono", "Droid Sans Mono", "Courier New", monospace;
+  --font-serif: 'Crimson Pro', serif;
 
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  /* Claude-style color system */
+  --bg-primary: #1a1816;
+  --bg-secondary: #252220;
+  --bg-tertiary: #2d2926;
+  --border-subtle: #3a3632;
+  --border-emphasis: #4a453f;
+  --accent-warm: #d4886f;
+  --accent-glow: rgba(212, 136, 111, 0.15);
+  --text-primary: #ebe6e0;
+  --text-secondary: #b8afa5;
+  --text-tertiary: #7a7269;
+  --text-muted: #5a5248;
+
+  --foreground-rgb: 235, 230, 224;
+  --background-start-rgb: 26, 24, 22;
+  --background-end-rgb: 26, 24, 22;
 
   --primary-glow: conic-gradient(from 180deg at 50% 50%,
-      #16abff33 0deg,
-      #0885ff33 55deg,
-      #54d6ff33 120deg,
-      #0071ff33 160deg,
+      rgba(212, 136, 111, 0.2) 0deg,
+      rgba(212, 136, 111, 0.1) 55deg,
+      rgba(212, 136, 111, 0.05) 120deg,
       transparent 360deg);
-  --secondary-glow: radial-gradient(rgba(255, 255, 255, 1),
-      rgba(255, 255, 255, 0));
+  --secondary-glow: radial-gradient(rgba(212, 136, 111, 0.1),
+      rgba(212, 136, 111, 0));
 
-  --tile-start-rgb: 239, 245, 249;
-  --tile-end-rgb: 228, 232, 233;
-  --tile-border: conic-gradient(#00000080,
-      #00000040,
-      #00000030,
-      #00000020,
-      #00000010,
-      #00000010,
-      #00000080);
+  --tile-start-rgb: 37, 34, 32;
+  --tile-end-rgb: 45, 41, 38;
+  --tile-border: conic-gradient(rgba(212, 136, 111, 0.3),
+      rgba(212, 136, 111, 0.2),
+      rgba(212, 136, 111, 0.1),
+      transparent);
 
-  --callout-rgb: 238, 240, 241;
-  --callout-border-rgb: 172, 175, 176;
-  --card-rgb: 180, 185, 188;
-  --card-border-rgb: 131, 134, 135;
+  --callout-rgb: 45, 41, 38;
+  --callout-border-rgb: 74, 69, 63;
+  --card-rgb: 37, 34, 32;
+  --card-border-rgb: 58, 54, 50;
 }
 
 /* @media (prefers-color-scheme: dark) {
@@ -69,6 +81,22 @@
   }
 } */
 
+/* Subtle paper texture overlay */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.015;
+  pointer-events: none;
+  background-image:
+    repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.03) 4px),
+    repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.03) 4px);
+  z-index: 9999;
+}
+
 * {
   box-sizing: border-box;
   padding: 0;
@@ -79,16 +107,13 @@ html,
 body {
   max-width: 100vw;
   overflow-x: hidden;
+  font-family: var(--font-serif);
+  letter-spacing: 0.01em;
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  /* background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb)); */
+  color: var(--text-primary);
+  background: var(--bg-primary);
 }
 
 a {
@@ -107,24 +132,79 @@ a {
   padding-bottom: 1.5rem;
   line-height: 1.5;
   font-size: 1.125rem;
-  color: #111928;
+  color: var(--text-primary);
+  font-weight: 500;
 }
 
 .h2 {
   font-size: 14px;
   font-weight: 500;
-  color: #111928;
+  color: var(--text-primary);
   line-height: 1.5;
 }
 
 .link {
-  @apply text-blue-600 cursor-pointer hover:opacity-80 transition-opacity duration-200 ease-in-out;
+  @apply cursor-pointer hover:opacity-80 transition-opacity duration-200 ease-in-out;
+  color: var(--accent-warm);
 }
 
 .text-gradient {
-  background: linear-gradient(91.58deg, #2250F2 -29.55%, #0EBCF3 75.22%);
+  background: linear-gradient(91.58deg, var(--accent-warm) -29.55%, #c97a5f 75.22%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   text-fill-color: transparent;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-subtle);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-emphasis);
+}
+
+/* Animations */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes messageAppear {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

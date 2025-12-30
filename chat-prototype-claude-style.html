@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IC 智能客服 - Claude Style</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #1a1816;
+            --bg-secondary: #252220;
+            --bg-tertiary: #2d2926;
+            --border-subtle: #3a3632;
+            --border-emphasis: #4a453f;
+            --accent-warm: #d4886f;
+            --accent-glow: rgba(212, 136, 111, 0.15);
+            --text-primary: #ebe6e0;
+            --text-secondary: #b8afa5;
+            --text-tertiary: #7a7269;
+            --text-muted: #5a5248;
+        }
+
+        body {
+            font-family: 'Crimson Pro', serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            height: 100vh;
+            overflow: hidden;
+            letter-spacing: 0.01em;
+        }
+
+        /* Subtle paper texture */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.015;
+            pointer-events: none;
+            background-image:
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.03) 4px),
+                repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.03) 4px);
+            z-index: 9999;
+        }
+
+        .app-container {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            height: 100vh;
+            position: relative;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border-subtle);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            animation: slideIn 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .sidebar-header {
+            padding: 32px 24px 24px;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .logo-mark {
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, var(--accent-warm) 0%, #c97a5f 100%);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+            box-shadow: 0 2px 12px var(--accent-glow);
+        }
+
+        .logo-text {
+            font-size: 18px;
+            font-weight: 500;
+            letter-spacing: -0.02em;
+        }
+
+        .new-chat-btn {
+            width: 100%;
+            padding: 10px 16px;
+            background: transparent;
+            border: 1px solid var(--border-emphasis);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 400;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.25s ease;
+        }
+
+        .new-chat-btn:hover {
+            background: var(--bg-tertiary);
+            border-color: var(--accent-warm);
+            color: var(--accent-warm);
+        }
+
+        .conversations {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px 12px;
+        }
+
+        .conversation-item {
+            padding: 10px 14px;
+            margin: 2px 0;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 13px;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            animation: fadeInItem 0.4s ease forwards;
+        }
+
+        .conversation-item:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .conversation-item:nth-child(2) {
+            animation-delay: 0.15s;
+        }
+
+        .conversation-item:nth-child(3) {
+            animation-delay: 0.2s;
+        }
+
+        .conversation-item:nth-child(4) {
+            animation-delay: 0.25s;
+        }
+
+        .conversation-item:nth-child(5) {
+            animation-delay: 0.3s;
+        }
+
+        @keyframes fadeInItem {
+            to {
+                opacity: 1;
+            }
+        }
+
+        .conversation-item::before {
+            content: '';
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: var(--text-muted);
+            flex-shrink: 0;
+        }
+
+        .conversation-item:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .conversation-item.active {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .conversation-item.active::before {
+            background: var(--accent-warm);
+            box-shadow: 0 0 8px var(--accent-glow);
+        }
+
+        .sidebar-footer {
+            padding: 16px 20px;
+            border-top: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .user-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .user-name {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* Main content */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-primary);
+            position: relative;
+            animation: fadeIn 0.8s ease 0.2s backwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .chat-header {
+            padding: 24px 40px;
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .chat-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .chat-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--accent-warm) 0%, #c97a5f 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 12px var(--accent-glow);
+        }
+
+        .chat-name {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .icon-button {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            border: 1px solid var(--border-subtle);
+            background: transparent;
+            color: var(--text-tertiary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .icon-button:hover {
+            background: var(--bg-secondary);
+            border-color: var(--border-emphasis);
+            color: var(--text-secondary);
+        }
+
+        /* Messages */
+        .messages-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        .message-group {
+            display: flex;
+            gap: 16px;
+            opacity: 0;
+            animation: messageAppear 0.5s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+        }
+
+        .message-group:nth-child(1) {
+            animation-delay: 0.3s;
+        }
+
+        .message-group:nth-child(2) {
+            animation-delay: 0.4s;
+        }
+
+        .message-group:nth-child(3) {
+            animation-delay: 0.5s;
+        }
+
+        @keyframes messageAppear {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .message-group.user .message-avatar {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-secondary);
+        }
+
+        .message-group.assistant .message-avatar {
+            background: linear-gradient(135deg, var(--accent-warm) 0%, #c97a5f 100%);
+            color: white;
+            box-shadow: 0 2px 12px var(--accent-glow);
+        }
+
+        .message-body {
+            flex: 1;
+            max-width: 720px;
+        }
+
+        .message-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .message-sender {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .message-timestamp {
+            font-size: 12px;
+            font-family: 'IBM Plex Mono', monospace;
+            color: var(--text-muted);
+        }
+
+        .message-content {
+            font-size: 15px;
+            line-height: 1.75;
+            color: var(--text-secondary);
+        }
+
+        .message-group.assistant .message-content {
+            color: var(--text-primary);
+        }
+
+        .message-content p {
+            margin-bottom: 12px;
+        }
+
+        .message-content p:last-child {
+            margin-bottom: 0;
+        }
+
+        .message-content strong {
+            color: var(--accent-warm);
+            font-weight: 500;
+        }
+
+        /* Welcome state */
+        .welcome-state {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            opacity: 0;
+            animation: fadeIn 0.8s ease 0.4s forwards;
+        }
+
+        .welcome-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, var(--accent-warm) 0%, #c97a5f 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 24px var(--accent-glow);
+        }
+
+        .welcome-title {
+            font-size: 28px;
+            font-weight: 500;
+            margin-bottom: 12px;
+            letter-spacing: -0.02em;
+        }
+
+        .welcome-subtitle {
+            font-size: 16px;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+
+        .welcome-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .welcome-btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .welcome-btn.primary {
+            background: linear-gradient(135deg, var(--accent-warm) 0%, #c97a5f 100%);
+            border: none;
+            color: white;
+            box-shadow: 0 2px 12px var(--accent-glow);
+        }
+
+        .welcome-btn.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px var(--accent-glow);
+        }
+
+        .welcome-btn.secondary {
+            background: transparent;
+            border: 1px solid var(--border-emphasis);
+            color: var(--text-secondary);
+        }
+
+        .welcome-btn.secondary:hover {
+            background: var(--bg-secondary);
+            border-color: var(--accent-warm);
+            color: var(--accent-warm);
+        }
+
+        /* Input area */
+        .input-section {
+            padding: 24px 40px 32px;
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        .input-wrapper {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .input-field {
+            width: 100%;
+            min-height: 52px;
+            max-height: 180px;
+            padding: 14px 88px 14px 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 15px;
+            color: var(--text-primary);
+            resize: none;
+            outline: none;
+            transition: all 0.25s ease;
+            line-height: 1.5;
+        }
+
+        .input-field:focus {
+            border-color: var(--accent-warm);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .input-field::placeholder {
+            color: var(--text-muted);
+        }
+
+        .input-controls {
+            position: absolute;
+            right: 10px;
+            bottom: 10px;
+            display: flex;
+            gap: 6px;
+        }
+
+        .input-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            border: none;
+            background: transparent;
+            color: var(--text-tertiary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .input-btn:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+        }
+
+        .input-btn.send {
+            background: linear-gradient(135deg, var(--accent-warm) 0%, #c97a5f 100%);
+            color: white;
+        }
+
+        .input-btn.send:hover {
+            transform: scale(1.05);
+            box-shadow: 0 2px 12px var(--accent-glow);
+        }
+
+        .input-meta {
+            max-width: 800px;
+            margin: 12px auto 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--text-muted);
+            font-family: 'IBM Plex Mono', monospace;
+        }
+
+        .model-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-subtle);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .model-badge:hover {
+            border-color: var(--border-emphasis);
+            color: var(--text-secondary);
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-subtle);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--border-emphasis);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .app-container {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-mark">IC</div>
+                    <span class="logo-text">智能客服</span>
+                </div>
+                <button class="new-chat-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 5v14M5 12h14" />
+                    </svg>
+                    新对话
+                </button>
+            </div>
+
+            <div class="conversations">
+                <div class="conversation-item active">SN74LV541A-Q1是什么芯片</div>
+                <div class="conversation-item">DGS (SOT 23) 封装尺寸</div>
+                <div class="conversation-item">汽车级芯片认证标准</div>
+                <div class="conversation-item">三态输出缓冲器工作原理</div>
+                <div class="conversation-item">共享控制逻辑设计</div>
+            </div>
+
+            <div class="sidebar-footer">
+                <div class="user-badge">
+                    <div class="user-avatar">N</div>
+                    <span class="user-name">Neal</span>
+                </div>
+                <button class="icon-button">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3" />
+                        <path d="M12 1v6m0 6v6M1 12h6m6 0h6" />
+                    </svg>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="chat-header">
+                <div class="chat-title">
+                    <div class="chat-avatar">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
+                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                        </svg>
+                    </div>
+                    <span class="chat-name">IC 智能客服</span>
+                </div>
+                <div class="header-actions">
+                    <button class="icon-button">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <circle cx="11" cy="11" r="8" />
+                            <path d="M21 21l-4.35-4.35" />
+                        </svg>
+                    </button>
+                    <button class="icon-button">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <circle cx="12" cy="12" r="1" />
+                            <circle cx="19" cy="12" r="1" />
+                            <circle cx="5" cy="12" r="1" />
+                        </svg>
+                    </button>
+                </div>
+            </header>
+
+            <div class="messages-area">
+                <div class="message-group user">
+                    <div class="message-avatar">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                            <circle cx="12" cy="7" r="4" />
+                        </svg>
+                    </div>
+                    <div class="message-body">
+                        <div class="message-meta">
+                            <span class="message-sender">你</span>
+                            <span class="message-timestamp">14:32</span>
+                        </div>
+                        <div class="message-content">
+                            <p>SN74LV541A-Q1是什么芯片？它的主要规格和应用场景是什么？</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="message-group assistant">
+                    <div class="message-avatar">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
+                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                        </svg>
+                    </div>
+                    <div class="message-body">
+                        <div class="message-meta">
+                            <span class="message-sender">IC 智能客服</span>
+                            <span class="message-timestamp">14:32</span>
+                        </div>
+                        <div class="message-content">
+                            <p><strong>SN74LV541A-Q1</strong> 是一款汽车级八路三态输出缓冲器/线路驱动器芯片，由德州仪器（TI）生产。这是一款专为汽车应用设计的高性能逻辑器件。
+                            </p>
+
+                            <p><strong>主要规格：</strong></p>
+                            <p>• <strong>工作电压范围</strong>：1.65V 至 5.5V<br>
+                                • <strong>输出电流</strong>：±24mA（5V 时）<br>
+                                • <strong>传播延迟</strong>：约 4.5ns（典型值）<br>
+                                • <strong>封装类型</strong>：SOIC、TSSOP、DGS (SOT-23) 等<br>
+                                • <strong>工作温度</strong>：-40°C 至 +125°C（汽车级）</p>
+
+                            <p><strong>应用场景：</strong></p>
+                            <p>• 汽车电子系统中的信号缓冲和驱动<br>
+                                • 总线接口驱动<br>
+                                • 电平转换应用<br>
+                                • 高速数字系统</p>
+
+                            <p>该芯片具有共享控制逻辑（Shared Control Logic），可以同时控制多个输出，非常适合需要高可靠性的汽车电子应用。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="message-group user">
+                    <div class="message-avatar">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                            <circle cx="12" cy="7" r="4" />
+                        </svg>
+                    </div>
+                    <div class="message-body">
+                        <div class="message-meta">
+                            <span class="message-sender">你</span>
+                            <span class="message-timestamp">14:35</span>
+                        </div>
+                        <div class="message-content">
+                            <p>它的封装尺寸具体是多少？</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-section">
+                <div class="input-wrapper">
+                    <textarea class="input-field" placeholder="输入你的问题... (Shift + Enter 换行)" rows="1"></textarea>
+                    <div class="input-controls">
+                        <button class="input-btn" title="附件">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path
+                                    d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" />
+                            </svg>
+                        </button>
+                        <button class="input-btn send" title="发送">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="input-meta">
+                    <div class="model-badge">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                        </svg>
+                        <span>DeepSeek-V3.2</span>
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <polyline points="6 9 12 15 18 9" />
+                        </svg>
+                    </div>
+                    <span>Automotive汽车</span>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Auto-resize textarea
+        const textarea = document.querySelector('.input-field');
+        textarea.addEventListener('input', function () {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 180) + 'px';
+        });
+
+        // Conversation switching
+        document.querySelectorAll('.conversation-item').forEach(item => {
+            item.addEventListener('click', function () {
+                document.querySelectorAll('.conversation-item').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Smooth scroll to bottom
+        const messagesArea = document.querySelector('.messages-area');
+        if (messagesArea) {
+            messagesArea.scrollTop = messagesArea.scrollHeight;
+        }
+
+        // Send message on Enter (not Shift+Enter)
+        textarea.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                // Send message logic here
+                console.log('Sending message:', this.value);
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -1,22 +1,37 @@
 .boxShodow {
-  box-shadow: 0px 12px 16px -4px rgba(16, 24, 40, 0.08), 0px 4px 6px -2px rgba(16, 24, 40, 0.03);
+  box-shadow: 0 4px 24px rgba(212, 136, 111, 0.1);
 }
 
 .bgGrayColor {
-  background-color: #F9FAFB;
+  background-color: var(--bg-secondary);
 }
 
 .headerBg {
   height: 3.5rem;
   padding-left: 1.5rem;
   padding-right: 1.5rem;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 .formLabel {
   width: 120px;
   margin-right: 8px;
+  color: var(--text-secondary);
+  font-family: var(--font-serif);
 }
 
 .customBtn {
   width: 136px;
+  background: linear-gradient(135deg, var(--accent-warm) 0%, #c97a5f 100%);
+  border: none;
+  color: white;
+  border-radius: 8px;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 12px var(--accent-glow);
+}
+
+.customBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px var(--accent-glow);
 }
