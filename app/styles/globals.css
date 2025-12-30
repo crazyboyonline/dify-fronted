@@ -14,22 +14,22 @@
     "Fira Mono", "Droid Sans Mono", "Courier New", monospace;
   --font-serif: 'Crimson Pro', serif;
 
-  /* Claude-style color system */
-  --bg-primary: #1a1816;
-  --bg-secondary: #252220;
-  --bg-tertiary: #2d2926;
-  --border-subtle: #3a3632;
-  --border-emphasis: #4a453f;
+  /* Claude-style light color system */
+  --bg-primary: #faf9f7;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #f5f4f2;
+  --border-subtle: #e8e7e4;
+  --border-emphasis: #d1d0cd;
   --accent-warm: #d4886f;
   --accent-glow: rgba(212, 136, 111, 0.15);
-  --text-primary: #ebe6e0;
-  --text-secondary: #b8afa5;
-  --text-tertiary: #7a7269;
-  --text-muted: #5a5248;
+  --text-primary: #2c2c2c;
+  --text-secondary: #5a5248;
+  --text-tertiary: #8a837b;
+  --text-muted: #a8a29e;
 
-  --foreground-rgb: 235, 230, 224;
-  --background-start-rgb: 26, 24, 22;
-  --background-end-rgb: 26, 24, 22;
+  --foreground-rgb: 44, 44, 44;
+  --background-start-rgb: 250, 249, 247;
+  --background-end-rgb: 250, 249, 247;
 
   --primary-glow: conic-gradient(from 180deg at 50% 50%,
       rgba(212, 136, 111, 0.2) 0deg,
@@ -39,17 +39,17 @@
   --secondary-glow: radial-gradient(rgba(212, 136, 111, 0.1),
       rgba(212, 136, 111, 0));
 
-  --tile-start-rgb: 37, 34, 32;
-  --tile-end-rgb: 45, 41, 38;
+  --tile-start-rgb: 245, 244, 242;
+  --tile-end-rgb: 255, 255, 255;
   --tile-border: conic-gradient(rgba(212, 136, 111, 0.3),
       rgba(212, 136, 111, 0.2),
       rgba(212, 136, 111, 0.1),
       transparent);
 
-  --callout-rgb: 45, 41, 38;
-  --callout-border-rgb: 74, 69, 63;
-  --card-rgb: 37, 34, 32;
-  --card-border-rgb: 58, 54, 50;
+  --callout-rgb: 245, 244, 242;
+  --callout-border-rgb: 209, 208, 205;
+  --card-rgb: 255, 255, 255;
+  --card-border-rgb: 232, 231, 228;
 }
 
 /* @media (prefers-color-scheme: dark) {
@@ -81,21 +81,7 @@
   }
 } */
 
-/* Subtle paper texture overlay */
-body::after {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0.015;
-  pointer-events: none;
-  background-image:
-    repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.03) 4px),
-    repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.03) 4px);
-  z-index: 9999;
-}
+/* Light theme - no texture needed */
 
 * {
   box-sizing: border-box;
