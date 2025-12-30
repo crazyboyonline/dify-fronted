@@ -32,11 +32,11 @@ const Sidebar: FC<ISidebarProps> = ({
   const { t } = useTranslation()
   return (
     <div
-      className="shrink-0 flex flex-col overflow-y-auto bg-[var(--bg-secondary)] pc:w-[260px] tablet:w-[192px] mobile:w-[240px] border-r border-[var(--border-subtle)] tablet:h-[calc(100vh_-_3rem)] mobile:h-screen"
+      className="shrink-0 flex flex-col overflow-y-auto overflow-x-hidden bg-[var(--bg-secondary)] pc:w-[260px] tablet:w-[192px] mobile:w-[240px] border-r border-[var(--border-subtle)] tablet:h-[calc(100vh_-_3rem)] mobile:h-screen"
       style={{ animation: 'slideIn 0.8s cubic-bezier(0.23, 1, 0.32, 1)' }}
     >
-      <div className="flex flex-shrink-0 p-6 !pb-4">
-        <div className="flex items-center gap-2 mb-5">
+      <div className="flex flex-col flex-shrink-0 p-6 !pb-4 gap-4">
+        <div className="flex items-center gap-2">
           <div className="w-7 h-7 bg-gradient-to-br from-[var(--accent-warm)] to-[#c97a5f] rounded-md flex items-center justify-center text-white text-sm font-semibold shadow-lg" style={{ boxShadow: '0 2px 12px var(--accent-glow)' }}>IC</div>
           <span className="text-[var(--text-primary)] font-medium text-base">智能客服</span>
         </div>
@@ -61,7 +61,7 @@ const Sidebar: FC<ISidebarProps> = ({
             <div
               onClick={() => onCurrentIdChange(item.id)}
               key={item.id}
-              className={`flex items-center gap-2.5 px-3.5 py-2.5 rounded-md cursor-pointer text-sm transition-all duration-200 opacity-0 ${isCurrent
+              className={`flex items-center gap-2.5 px-3.5 py-2.5 rounded-md cursor-pointer text-sm transition-all duration-200 opacity-0 min-w-0 ${isCurrent
                 ? 'bg-[var(--bg-tertiary)] text-[var(--text-primary)]'
                 : 'text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] hover:text-[var(--text-primary)]'
                 }`}
@@ -69,7 +69,7 @@ const Sidebar: FC<ISidebarProps> = ({
             >
               <div className={`w-1 h-1 rounded-full flex-shrink-0 ${isCurrent ? 'bg-[var(--accent-warm)]' : 'bg-[var(--text-muted)]'
                 }`} style={isCurrent ? { boxShadow: '0 0 8px var(--accent-glow)' } : {}}></div>
-              <span className="truncate">{item.name}</span>
+              <span className="truncate flex-1 min-w-0">{item.name}</span>
             </div>
           )
         })}
